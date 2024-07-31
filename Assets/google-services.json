@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "751649042850",
+    "project_id": "community-centre-game",
+    "storage_bucket": "community-centre-game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751649042850:android:bf4d238c87657798a342fb",
+        "android_client_info": {
+          "package_name": "com.SandraTrinh.CommunityCentreGame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-zcFrWveXZFZIQUyoXULlOqJFopXS_Nk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
