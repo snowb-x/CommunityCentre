@@ -9,24 +9,28 @@ using FirebaseWebGL.Examples.Utils;
 using FirebaseWebGL.Scripts.FirebaseBridge;
 using FirebaseWebGL.Scripts.Objects;
 
+
+//Avatar struct object to be converted to JSON and post to database.
 public class MyAvatar
 {
     public string name;
     public Color colour;
     public int spriteId;
+    public string userID;
 }
 
 
 public class CreateAvatar : MonoBehaviour
 {
     //AVATAR Sprite variables
-    [SerializeField] private Image _avatarSprite;
+    [SerializeField] private Image _avatarSprite;//the sprite/image display in creator screen
     
     //FORM SECTION variables
-    [SerializeField] private TMP_InputField _textInputFieldName;
-    [SerializeField] private TMP_InputField _colourPicker;//??????
-    [SerializeField] private TMP_Text _textLog;
-    [SerializeField] private String _collectionPath = "avatar";
+    [SerializeField] private TMP_InputField _textInputFieldName;// holds the player's created avatar name
+    [SerializeField] private TMP_InputField _colourPicker;//?????? not used, can be repurposed
+    [SerializeField] private TMP_Text _textLog;//debug log to game screen
+    [SerializeField] private String _collectionPath = "avatar";// firebase firestore collection path name
+    [SerializeField] private int _spriteID; //the ID of the sprite the player chooses to use
    
     // COLOUR PICKER variables 
     [SerializeField] private Slider _colourSliderR;
@@ -70,6 +74,7 @@ public class CreateAvatar : MonoBehaviour
         });
     }
 
+    // GET and ADD Request to Firebase firestore database methods calling plugIn methods in firebase package.
     public void GetDocument() =>
         FirebaseFirestore.GetDocument(_collectionPath, _textInputFieldName.text, gameObject.name, "OnRequestSuccess",
             "OnRequestFailed");
@@ -99,7 +104,8 @@ public class CreateAvatar : MonoBehaviour
         MyAvatar newAvatar = new MyAvatar();
         newAvatar.name = _textInputFieldName.text;
         newAvatar.colour = _avatarColour;
-        newAvatar.spriteId = 0;
+        newAvatar.spriteId = _spriteID;
+        newAvatar.userID = GameManager.Instance.UserID;
         string json = JsonUtility.ToJson(newAvatar);
         return json;
     }
@@ -111,4 +117,7 @@ public class CreateAvatar : MonoBehaviour
         _avatarSprite.color = _avatarColour;
         OnRequestSuccess(_avatarColour.ToString());
     }
+    
+    //AVATAR sprite picker-------------------------
+    // ToDo: sprite picker and tint with avatar colour
 }
