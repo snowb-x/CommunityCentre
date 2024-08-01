@@ -12,9 +12,12 @@ public class DebugSettings : MonoBehaviour
     [SerializeField]private TMP_Text _textColourPickerRed;    
     [SerializeField]private TMP_Text _textColourPickerGreen;
     [SerializeField] private TMP_Text _textColourPickerBlue;
+    [SerializeField] private TMP_Text _textUserInfo;
+
     [Space(10)]
     [Header("Show Debug Text?")] [Header("On screen Log")] 
     [SerializeField] private bool _flagLog;
+    [SerializeField] private bool _flagUserInfo;
     [Header("Colour Picker")]
     [SerializeField] private bool _flagColourPickerRed;
     [SerializeField] private bool _flagColourPickerGreen;
@@ -27,6 +30,7 @@ public class DebugSettings : MonoBehaviour
         _textColourPickerRed.gameObject.SetActive(_flagColourPickerRed);
         _textColourPickerGreen.gameObject.SetActive(_flagColourPickerGreen);
         _textColourPickerBlue.gameObject.SetActive(_flagColourPickerBlue);
+        _textUserInfo.gameObject.SetActive(_flagUserInfo);
     }
     
 }

@@ -30,7 +30,7 @@ public class CreateAvatar : MonoBehaviour
     [SerializeField] private TMP_InputField _colourPicker;//?????? not used, can be repurposed
     [SerializeField] private TMP_Text _textLog;//debug log to game screen
     [SerializeField] private String _collectionPath = "avatar";// firebase firestore collection path name
-    [SerializeField] private int _spriteID; //the ID of the sprite the player chooses to use
+    [SerializeField] private int _spriteID = 0; //the ID of the sprite the player chooses to use
    
     // COLOUR PICKER variables 
     [SerializeField] private Slider _colourSliderR;
@@ -113,11 +113,16 @@ public class CreateAvatar : MonoBehaviour
     //COLOUR PICKER--------------------------------
     private void SetSpriteColour()
     {
-        _avatarColour = new Color(_red, _green, _blue,1.0f);
+        _avatarColour = new Color(_red, _green, _blue,1.0f);// values RGB 0 -> 1.0f, Alpha = 1.0f
         _avatarSprite.color = _avatarColour;
         OnRequestSuccess(_avatarColour.ToString());
     }
     
     //AVATAR sprite picker-------------------------
     // ToDo: sprite picker and tint with avatar colour
+    private void SetSpriteID(int id)
+    {
+        _spriteID = id;
+        GameManager.Instance.UserSpriteID = id;
+    }
 }

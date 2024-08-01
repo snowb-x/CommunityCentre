@@ -11,6 +11,7 @@ public class LogIn : MonoBehaviour
 {
 
     [SerializeField] private TMP_Text _text;
+    [SerializeField] private TMP_Text _textUserInfo;
     /// <summary>
     /// Creates a user with email and password
     /// </summary>
@@ -45,15 +46,17 @@ public class LogIn : MonoBehaviour
     private void OnRequestSignInSuccess(string data)
     {
         _text.color = Color.green;
-        _text.text = data;
+        _textUserInfo.text = data;
 
         User currentUser = JsonUtility.FromJson<User>(data);
         GameManager.Instance.UserID = currentUser.uid;
+        
+        _textUserInfo.text = currentUser.uid;
     }
 
     private void OnRequestSignInFailed(string error)
     {
         _text.color = Color.red;
-        _text.text = error;
+        _textUserInfo.text = error;
     }
 }
