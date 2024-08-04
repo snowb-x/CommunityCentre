@@ -25,7 +25,12 @@ public class GameManager : MonoBehaviour
     public string UserID { get => _userID; set => _userID = value; }
     private int _userSpriteID;
     public int UserSpriteID { get => _userSpriteID; set => _userSpriteID = value; }
-    
+    private Color _userColour;
+
+    public Color UserColour { get => _userColour; set => _userColour = value;}
+    [SerializeField] private Sprite[] _avatarSpriteList;
+
+    public Sprite[] AvatarSpriteList => _avatarSpriteList;
 
     private void Awake()
     {
@@ -37,6 +42,7 @@ public class GameManager : MonoBehaviour
         else
         {
             _instance = this;
+            DontDestroyOnLoad(this.gameObject);
         }
     }
 }

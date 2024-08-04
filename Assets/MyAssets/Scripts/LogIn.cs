@@ -27,17 +27,17 @@ public class LogIn : MonoBehaviour
             Debug.LogError("The code is not running on a WebGL build; as such, the Javascript functions will not be recognized.");
             return;
         }
-        SignInAnonymously(gameObject.name, "OnRequestSuccess","OnRequestFailed");
+        SignInAnonymously(gameObject.name, "OnRequestLogInSuccess","OnRequestLogInFailed");
         FirebaseAuth.OnAuthStateChanged(gameObject.name, "OnRequestSignInSuccess","OnRequestSignInFailed");
     }
     
-    private void OnRequestSuccess(string data)
+    private void OnRequestLogInSuccess(string data)
     {
         _text.color = Color.green;
         _text.text = data;
     }
 
-    private void OnRequestFailed(string error)
+    private void OnRequestLogInFailed(string error)
     {
         _text.color = Color.red;
         _text.text = error;

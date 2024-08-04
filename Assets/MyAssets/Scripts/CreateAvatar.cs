@@ -8,6 +8,7 @@ using TMPro;
 using FirebaseWebGL.Examples.Utils;
 using FirebaseWebGL.Scripts.FirebaseBridge;
 using FirebaseWebGL.Scripts.Objects;
+using UnityEngine.SceneManagement;
 
 
 //Avatar struct object to be converted to JSON and post to database.
@@ -22,16 +23,22 @@ public class MyAvatar
 
 public class CreateAvatar : MonoBehaviour
 {
+    [Header ("Avatar")]
     //AVATAR Sprite variables
     [SerializeField] private Image _avatarSprite;//the sprite/image display in creator screen
+    [SerializeField] private int _spriteID = 0; //the ID of the sprite the player chooses to use
+    private Sprite[] _avatarSpriteList;
     
+    [Header("Field Text Input")]
     //FORM SECTION variables
     [SerializeField] private TMP_InputField _textInputFieldName;// holds the player's created avatar name
     [SerializeField] private TMP_InputField _colourPicker;//?????? not used, can be repurposed
     [SerializeField] private TMP_Text _textLog;//debug log to game screen
-    [SerializeField] private String _collectionPath = "avatar";// firebase firestore collection path name
-    [SerializeField] private int _spriteID = 0; //the ID of the sprite the player chooses to use
    
+    [Header("Data Base Path")]
+    [SerializeField] private String _collectionPath = "avatar";// firebase firestore collection path name
+    
+    [Header("Colour Picker")]
     // COLOUR PICKER variables 
     [SerializeField] private Slider _colourSliderR;
     [SerializeField] private Slider _colourSliderG;
@@ -44,6 +51,11 @@ public class CreateAvatar : MonoBehaviour
     private float _red = 0;
     private float _green = 0;
     private float _blue = 0;
+
+    private void Awake()
+    {
+        _avatarSpriteList = GameManager.Instance.AvatarSpriteList;
+    }
 
     private void Start()
     {
@@ -91,12 +103,19 @@ public class CreateAvatar : MonoBehaviour
     {
         _textLog.color = Color.green;
         _textLog.text = data;
+       SceneManager.LoadScene("CommuntityCentre");
     }
 
     private void OnRequestFailed(string error)
     {
         _textLog.color = Color.red;
         _textLog.text = error;
+    }
+    
+    private void PrintMessageOnScreen(string msg)
+    {
+        _textLog.color = Color.red;
+        _textLog.text = msg;
     }
 
     private String SetJSONStringValue()
@@ -115,14 +134,17 @@ public class CreateAvatar : MonoBehaviour
     {
         _avatarColour = new Color(_red, _green, _blue,1.0f);// values RGB 0 -> 1.0f, Alpha = 1.0f
         _avatarSprite.color = _avatarColour;
-        OnRequestSuccess(_avatarColour.ToString());
+        PrintMessageOnScreen(_avatarColour.ToString());
+        GameManager.Instance.UserColour = _avatarColour;
     }
     
     //AVATAR sprite picker-------------------------
     // ToDo: sprite picker and tint with avatar colour
-    private void SetSpriteID(int id)
+    public void SetSpriteID(int id)
     {
         _spriteID = id;
         GameManager.Instance.UserSpriteID = id;
+        _avatarSprite.sprite = _avatarSpriteList[id];
+        PrintMessageOnScreen("sprite ID is: "+ id);
     }
 }
