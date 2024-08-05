@@ -33,12 +33,18 @@ mergeInto(LibraryManager.library, {
         try {
             firebase.firestore().collection(parsedPath).get().then(function (querySnapshot) {
 
-                var docs = {};
+                // var docs = {};
+                // querySnapshot.forEach(function(doc) {
+                //     docs[doc.id] = doc.data();
+                // });
+
+                var myJsonString = "[";
                 querySnapshot.forEach(function(doc) {
-                    docs[doc.id] = doc.data();
+                    myJsonString += JSON.stringify(doc.data()) + ",";
                 });
 
-                unityInstance.Module.SendMessage(parsedObjectName, parsedCallback, JSON.stringify(docs));
+                myJsonString += "]"
+                unityInstance.Module.SendMessage(parsedObjectName, parsedCallback, myJsonString);
             }).catch(function(error) {
                 unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
             });

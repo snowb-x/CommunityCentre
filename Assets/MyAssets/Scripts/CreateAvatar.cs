@@ -5,20 +5,12 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using FirebaseWebGL.Examples.Utils;
 using FirebaseWebGL.Scripts.FirebaseBridge;
-using FirebaseWebGL.Scripts.Objects;
 using UnityEngine.SceneManagement;
 
 
 //Avatar struct object to be converted to JSON and post to database.
-public class MyAvatar
-{
-    public string name;
-    public Color colour;
-    public int spriteId;
-    public string userID;
-}
+
 
 
 public class CreateAvatar : MonoBehaviour
@@ -52,11 +44,6 @@ public class CreateAvatar : MonoBehaviour
     private float _green = 0;
     private float _blue = 0;
 
-    private void Awake()
-    {
-       
-    }
-
     private void Start()
     {
         if (Application.platform != RuntimePlatform.WebGLPlayer)
@@ -64,37 +51,14 @@ public class CreateAvatar : MonoBehaviour
             _textLog.text =
                 "The code is not running on a WebGL build; as such, the Javascript functions will not be recognized."; };
 
+        GameManager.Instance.DataBaseCollectionPath = _collectionPath;
         _avatarSpriteList = GameManager.Instance.AvatarSpriteList;
         SetSpriteColour();
         //COLOUR PICKER SLIDERS LISTENER
-        _colourSliderR.onValueChanged.AddListener((v) =>
-        {
-            _red = v;
-            _textRed.text = _red.ToString();
-            SetSpriteColour();
-        });
-        _colourSliderG.onValueChanged.AddListener((v) =>
-        {
-            _green = v;
-            _textGreen.text = _green.ToString();
-            SetSpriteColour();
-        });
-        _colourSliderB.onValueChanged.AddListener((v) =>
-        {
-            _blue = v;
-            _textBlue.text = _blue.ToString();
-            SetSpriteColour();
-        });
+        SetSliderListeners();
     }
 
     // GET and ADD Request to Firebase firestore database methods calling plugIn methods in firebase package.
-    public void GetDocument() =>
-        FirebaseFirestore.GetDocument(_collectionPath, _textInputFieldName.text, gameObject.name, "OnRequestSuccess",
-            "OnRequestFailed");
-
-    public void GetDocumentsInCollection() =>
-        FirebaseFirestore.GetDocumentsInCollection(_collectionPath, gameObject.name, "OnRequestSuccess",
-            "OnRequestFailed");
 
     public void AddDocument() => FirebaseFirestore.AddDocument(_collectionPath, SetJSONStringValue(),
         gameObject.name,
@@ -115,7 +79,7 @@ public class CreateAvatar : MonoBehaviour
     
     private void PrintMessageOnScreen(string msg)
     {
-        _textLog.color = Color.red;
+        _textLog.color = Color.yellow;
         _textLog.text = msg;
     }
 
@@ -142,6 +106,28 @@ public class CreateAvatar : MonoBehaviour
         _avatarSprite.color = _avatarColour;
         PrintMessageOnScreen(_avatarColour.ToString());
         GameManager.Instance.UserColour = _avatarColour;
+    }
+
+    private void SetSliderListeners()
+    {
+        _colourSliderR.onValueChanged.AddListener((v) =>
+        {
+            _red = v;
+            _textRed.text = _red.ToString();
+            SetSpriteColour();
+        });
+        _colourSliderG.onValueChanged.AddListener((v) =>
+        {
+            _green = v;
+            _textGreen.text = _green.ToString();
+            SetSpriteColour();
+        });
+        _colourSliderB.onValueChanged.AddListener((v) =>
+        {
+            _blue = v;
+            _textBlue.text = _blue.ToString();
+            SetSpriteColour();
+        });
     }
     
     //AVATAR sprite picker-------------------------

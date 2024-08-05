@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite[] _avatarSpriteList;
 
     public Sprite[] AvatarSpriteList => _avatarSpriteList;
+    [SerializeField] private string _dataBaseCollectionPath;
+
+    public string DataBaseCollectionPath { get => _dataBaseCollectionPath; set => _dataBaseCollectionPath = value;}
 
     private void Awake()
     {
