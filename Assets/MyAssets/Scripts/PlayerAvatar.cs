@@ -19,6 +19,6 @@ public class PlayerAvatar : MonoBehaviour
     private void Start()
     {
         _spriteRenderer.sprite = GameManager.Instance.AvatarSpriteList[GameManager.Instance.UserSpriteID];
-        _spriteRenderer.color = _playerColour;
+        _spriteRenderer.color = GameManager.Instance.UserColour;
     }
 }

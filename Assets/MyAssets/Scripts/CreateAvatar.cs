@@ -27,7 +27,7 @@ public class CreateAvatar : MonoBehaviour
     //AVATAR Sprite variables
     [SerializeField] private Image _avatarSprite;//the sprite/image display in creator screen
     [SerializeField] private int _spriteID = 0; //the ID of the sprite the player chooses to use
-    private Sprite[] _avatarSpriteList;
+    [SerializeField] private Sprite[] _avatarSpriteList;
     
     [Header("Field Text Input")]
     //FORM SECTION variables
@@ -54,7 +54,7 @@ public class CreateAvatar : MonoBehaviour
 
     private void Awake()
     {
-        _avatarSpriteList = GameManager.Instance.AvatarSpriteList;
+       
     }
 
     private void Start()
@@ -64,6 +64,7 @@ public class CreateAvatar : MonoBehaviour
             _textLog.text =
                 "The code is not running on a WebGL build; as such, the Javascript functions will not be recognized."; };
 
+        _avatarSpriteList = GameManager.Instance.AvatarSpriteList;
         SetSpriteColour();
         //COLOUR PICKER SLIDERS LISTENER
         _colourSliderR.onValueChanged.AddListener((v) =>
@@ -103,7 +104,7 @@ public class CreateAvatar : MonoBehaviour
     {
         _textLog.color = Color.green;
         _textLog.text = data;
-       SceneManager.LoadScene("CommuntityCentre");
+        LoadScene("CommuntityCentre");
     }
 
     private void OnRequestFailed(string error)
@@ -127,6 +128,11 @@ public class CreateAvatar : MonoBehaviour
         newAvatar.userID = GameManager.Instance.UserID;
         string json = JsonUtility.ToJson(newAvatar);
         return json;
+    }
+
+    public void LoadScene(string scene)
+    {
+        SceneManager.LoadScene(scene);
     }
     
     //COLOUR PICKER--------------------------------

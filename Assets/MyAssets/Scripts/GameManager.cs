@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     public string UserID { get => _userID; set => _userID = value; }
     private int _userSpriteID;
     public int UserSpriteID { get => _userSpriteID; set => _userSpriteID = value; }
-    private Color _userColour;
+    private Color _userColour = new Color(1,1,1,1);
 
     public Color UserColour { get => _userColour; set => _userColour = value;}
     [SerializeField] private Sprite[] _avatarSpriteList;
