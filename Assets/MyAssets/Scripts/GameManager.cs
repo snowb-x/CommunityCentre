@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
 
     public Sprite[] AvatarSpriteList => _avatarSpriteList;
     [SerializeField] private string _dataBaseCollectionPath;
+    [SerializeField] private Peep _prefabPeep; //the prefab for avatars in the data base
 
     public string DataBaseCollectionPath { get => _dataBaseCollectionPath; set => _dataBaseCollectionPath = value;}
 
