@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 
+    [Serializable]//Important to add this so the JsonUtility can serialize objects with this class
     public class MyAvatar
     {
         public string name;

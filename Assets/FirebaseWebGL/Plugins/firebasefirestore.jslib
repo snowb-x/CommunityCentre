@@ -38,12 +38,22 @@ mergeInto(LibraryManager.library, {
                 //     docs[doc.id] = doc.data();
                 // });
 
-                var myJsonString = "[";
+                let myJsonString = "[";
+                var firstBool = 1;
+                var maxData = 3;
                 querySnapshot.forEach(function(doc) {
-                    myJsonString += JSON.stringify(doc.data()) + ",";
+                   // if(maxData > 0){
+                        if(firstBool == 1){
+                            firstBool = 0;
+                            myJsonString += JSON.stringify(doc.data());
+                        } else{
+                            myJsonString += ","+JSON.stringify(doc.data());
+                        }
+                       // maxData = maxData - 1;
+                    //}
                 });
 
-                myJsonString += "]"
+                myJsonString += "]";
                 unityInstance.Module.SendMessage(parsedObjectName, parsedCallback, myJsonString);
             }).catch(function(error) {
                 unityInstance.Module.SendMessage(parsedObjectName, parsedFallback, JSON.stringify(error, Object.getOwnPropertyNames(error)));
