@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using FirebaseWebGL.Scripts.FirebaseBridge;
 using TMPro;
@@ -44,19 +45,24 @@ public class LoadCommunity : MonoBehaviour
     private string _allPopulationAvatarsJSON = "";
     private string _testJsonData;
     [SerializeField] private TMP_Text _textLog;
+    [SerializeField] private TMP_Text _textInfo;
     [SerializeField] private TMP_InputField _inputFieldDebug;
-    private Population _avatarPopulation;//wrapper 
+    private Population _avatarPopulation;//wrapper
     [SerializeField] private Peep _peepPrefab;//the prefab for avatars in the data base
     [SerializeField] private Transform _spawnPoint;
     [SerializeField] private float _spawnOffset = 2.0f; // offset max, used to randomise the spawn location
     [SerializeField] private Sprite[] _listOfSprites; 
-    [SerializeField] private Sprite[] _listOfSpritesDebug; 
+    [SerializeField] private Sprite[] _listOfSpritesDebug;
+    [SerializeField] private string _gameInfoTextFormat = "Walk WASD/Arrows \n Population count: {0} / {1}";
+    private int _spawnCount=0;
     private void Start()
     {
         _avatarPopulation = new Population();
+        _avatarPopulation.Items = null;
         _collectionPath = GameManager.Instance.DataBaseCollectionPath;
         _listOfSprites = GameManager.Instance.AvatarSpriteList;
         StartCoroutine(LoadPopulation());
+        _textInfo.text = string.Format(_gameInfoTextFormat, _spawnCount,0);
     }
 
     //GET Request to get all the avatar in the data base. returned as a json file
@@ -84,11 +90,15 @@ public class LoadCommunity : MonoBehaviour
         _textLog.text = data;
     }
 
+    private bool doneLoadingObject = false;
+
     private void LoadJsonDataToObject(string data)
     {
         _textLog.text = _allPopulationAvatarsJSON;
         _avatarPopulation.Items = FromJson(data);
+        doneLoadingObject = true;
     }
+    
     
     /// <summary>
     /// Load the population first but getting the json string from the firestore database
@@ -101,21 +111,59 @@ public class LoadCommunity : MonoBehaviour
         GetDocumentsInCollection(); //set the _allPopulationAvatarsJSON string with the data from the database. Data has been JSON.stringify
         yield return new WaitUntil(()=>_allPopulationAvatarsJSON != "");
         LoadJsonDataToObject(_allPopulationAvatarsJSON); //set the _avatarPopulation [the wrapper] with the MyAvatar[] = Items, convert json to object
-        InstantiateAvatarPopulation(_avatarPopulation.Items); 
+        yield return new WaitUntil(()=>doneLoadingObject);
+        StartCoroutine(InstantiateAvatarPopulation(_avatarPopulation.Items));
     }
+    float timePast = 0.0f;
+    float maxWaitTime = 10.0f;//sec
+    private bool breakFree = false;
 
-    private void InstantiateAvatarPopulation(MyAvatar[] avatarPopulationData)
+    IEnumerator InstantiateAvatarPopulation(MyAvatar[] avatarPopulationData)
     {
+        StartCoroutine(timer());
+        int count = _spawnCount;
         _textLog.text = avatarPopulationData.Length.ToString();
         _inputFieldDebug.text = avatarPopulationData.Length.ToString();
+        
         foreach (var avatar in avatarPopulationData)
         {
+            timePast = 0.0f;
+            yield return new WaitForSeconds(0.3f);
             if (GameManager.Instance.UserID != avatar.userID)
             {
+                _spawnCount= ++count;
+                _inputFieldDebug.text = count.ToString();
+                _textInfo.text = string.Format(_gameInfoTextFormat, count, avatarPopulationData.Length);
                 InstantiateOneAvatar(avatar);   
+            }
+            
+        }
+
+        StopCoroutine(timer());
+    }
+
+    IEnumerator timer()
+    {
+        while (timePast<maxWaitTime)
+        {
+            timePast += Time.deltaTime*1.0f;
+        }
+        yield return new WaitUntil(()=>timePast > maxWaitTime);
+        
+        if (_spawnCount != _avatarPopulation.Items.Length)
+        {
+            StopCoroutine(InstantiateAvatarPopulation(_avatarPopulation.Items));
+
+            for (int i = _spawnCount-1; i < _avatarPopulation.Items.Length; i++)
+            {
+                _spawnCount++;
+                _textInfo.text = string.Format(_gameInfoTextFormat, _spawnCount, _avatarPopulation.Items.Length);
+                InstantiateOneAvatar(_avatarPopulation.Items[i]);                
             }
         }
     }
+
+   
     private void InstantiateOneAvatar(MyAvatar avatar)
     {
         Peep aPeep = Instantiate(_peepPrefab);
@@ -198,6 +246,6 @@ public class LoadCommunity : MonoBehaviour
         b.userID = "noUser";
         _avatarPopulation.Items = new[] { a, b };
         _listOfSprites = _listOfSpritesDebug;
-        InstantiateAvatarPopulation(_avatarPopulation.Items);
+        StartCoroutine(InstantiateAvatarPopulation(_avatarPopulation.Items));
     }
 }
