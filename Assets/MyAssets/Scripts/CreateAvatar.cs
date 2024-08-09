@@ -17,9 +17,10 @@ public class CreateAvatar : MonoBehaviour
 {
     [Header ("Avatar")]
     //AVATAR Sprite variables
-    [SerializeField] private Image _avatarSprite;//the sprite/image display in creator screen
+    [SerializeField] private Image _avatarSprite; //the sprite/image display in creator screen
     [SerializeField] private int _spriteID = 0; //the ID of the sprite the player chooses to use
     [SerializeField] private Sprite[] _avatarSpriteList;
+    [SerializeField] private int _defaultSpriteID = 0;
     
     [Header("Field Text Input")]
     //FORM SECTION variables
@@ -53,7 +54,8 @@ public class CreateAvatar : MonoBehaviour
 
         GameManager.Instance.DataBaseCollectionPath = _collectionPath;
         _avatarSpriteList = GameManager.Instance.AvatarSpriteList;
-        SetSpriteColour();
+        SetSpriteID(_defaultSpriteID);
+        SetSpriteColour();//set the default colour
         //COLOUR PICKER SLIDERS LISTENER
         SetSliderListeners();
     }
@@ -90,6 +92,7 @@ public class CreateAvatar : MonoBehaviour
         newAvatar.colour = _avatarColour;
         newAvatar.spriteId = _spriteID;
         newAvatar.userID = GameManager.Instance.UserID;
+        GameManager.Instance.UserAvatarName = newAvatar.name;
         string json = JsonUtility.ToJson(newAvatar);
         return json;
     }
@@ -136,7 +139,15 @@ public class CreateAvatar : MonoBehaviour
     {
         _spriteID = id;
         GameManager.Instance.UserSpriteID = id;
-        _avatarSprite.sprite = _avatarSpriteList[id];
-        PrintMessageOnScreen("sprite ID is: "+ id);
+        _avatarSprite.sprite = _avatarSpriteList[id]; // set the selected sprite displayer in creator screen
+        PrintMessageOnScreen("sprite ID is: "+ id); //debug text
+        if (id > GameManager.Instance.LastTallSpriteID)
+        {
+            _avatarSprite.rectTransform.sizeDelta = new Vector2(75,75);
+        }
+        else
+        {
+            _avatarSprite.rectTransform.sizeDelta = new Vector2(75,150);
+        }
     }
 }

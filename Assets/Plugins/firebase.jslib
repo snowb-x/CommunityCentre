@@ -4,6 +4,8 @@ mergeInto(LibraryManager.library, {
     window.alert("Hello SANDRA");
   },
 
-   
+   SyncFS: function () {
+        _JS_FileSystem_Sync();
+    }
 
 });

@@ -5,6 +5,7 @@ using UnityEngine;
 using FirebaseWebGL.Scripts.FirebaseBridge;
 using TMPro;
 using Unity.VisualScripting;
+using Random = UnityEngine.Random;
 
 /*
  * JSON => objects class list
@@ -40,17 +41,21 @@ class Population
 public class LoadCommunity : MonoBehaviour
 {
     private string _collectionPath;
-    private string _allPopulationAvatarsJSON;
+    private string _allPopulationAvatarsJSON = "";
     private string _testJsonData;
     [SerializeField] private TMP_Text _textLog;
     [SerializeField] private TMP_InputField _inputFieldDebug;
     private Population _avatarPopulation;//wrapper 
-    
-
+    [SerializeField] private Peep _peepPrefab;//the prefab for avatars in the data base
+    [SerializeField] private Transform _spawnPoint;
+    [SerializeField] private float _spawnOffset = 2.0f; // offset max, used to randomise the spawn location
+    [SerializeField] private Sprite[] _listOfSprites; 
+    [SerializeField] private Sprite[] _listOfSpritesDebug; 
     private void Start()
     {
         _avatarPopulation = new Population();
         _collectionPath = GameManager.Instance.DataBaseCollectionPath;
+        _listOfSprites = GameManager.Instance.AvatarSpriteList;
         StartCoroutine(LoadPopulation());
     }
 
@@ -68,8 +73,8 @@ public class LoadCommunity : MonoBehaviour
     private MyAvatar[] FromJson (string json)
     {
         Population theAvatars = new Population();
-        theAvatars = JsonUtility.FromJson<Population>(json);
-        //JsonUtility.FromJsonOverwrite(json, theAvatars);
+        //theAvatars = JsonUtility.FromJson<Population>(json);
+        JsonUtility.FromJsonOverwrite(json, theAvatars);
         return theAvatars.Items;
     }
     
@@ -82,9 +87,48 @@ public class LoadCommunity : MonoBehaviour
     private void LoadJsonDataToObject(string data)
     {
         _textLog.text = _allPopulationAvatarsJSON;
-        //_avatarPopulation.Items = FromJson(data);
+        _avatarPopulation.Items = FromJson(data);
+    }
+    
+    /// <summary>
+    /// Load the population first but getting the json string from the firestore database
+    /// then Parse the JSON to unity Object array
+    /// next Instantiate all the avatars except the player
+    /// </summary>
+    /// <returns>load and instantiate the avatar population</returns>
+    IEnumerator LoadPopulation()
+    {
+        GetDocumentsInCollection(); //set the _allPopulationAvatarsJSON string with the data from the database. Data has been JSON.stringify
+        yield return new WaitUntil(()=>_allPopulationAvatarsJSON != "");
+        LoadJsonDataToObject(_allPopulationAvatarsJSON); //set the _avatarPopulation [the wrapper] with the MyAvatar[] = Items, convert json to object
+        InstantiateAvatarPopulation(_avatarPopulation.Items); 
     }
 
+    private void InstantiateAvatarPopulation(MyAvatar[] avatarPopulationData)
+    {
+        _textLog.text = avatarPopulationData.Length.ToString();
+        _inputFieldDebug.text = avatarPopulationData.Length.ToString();
+        foreach (var avatar in avatarPopulationData)
+        {
+            if (GameManager.Instance.UserID != avatar.userID)
+            {
+                InstantiateOneAvatar(avatar);   
+            }
+        }
+    }
+    private void InstantiateOneAvatar(MyAvatar avatar)
+    {
+        Peep aPeep = Instantiate(_peepPrefab);
+        aPeep.SetSprite(avatar.spriteId,_listOfSprites[avatar.spriteId],avatar.colour);
+        aPeep.SetParent(gameObject);
+        Vector3 spawnLocation = _spawnPoint.transform.position + new Vector3(Random.Range(-1*_spawnOffset,_spawnOffset),0,Random.Range(-1*_spawnOffset,_spawnOffset));
+        aPeep.SetLocation(spawnLocation);
+        aPeep.SetNameOfObject(avatar.name);//must SetSprite() before SetNameOfObject, to set the peep's spriteID, to determine the name height;
+    }
+    
+    //----------------------------------------------------------------------------
+   // DEBUG STUFF
+    
     public void DebugPrintOneAvatar()
     {
         int id = 0;
@@ -94,9 +138,10 @@ public class LoadCommunity : MonoBehaviour
             _textLog.text += "\n The avatar name is : "+item.name;
         }
     }
-
+    
     /// <summary>
     /// DEBUG button for the json data parse to and from JSON <--> Objects
+    /// Left in code for future debug if needed.
     /// </summary>
     /// <param name="id">The index or ID of the avatar name you want to print</param>
     public void GetAvatar()
@@ -139,10 +184,20 @@ public class LoadCommunity : MonoBehaviour
         }
     }
 
-    IEnumerator LoadPopulation()
+    public void LoadSamplePopulation()
     {
-        GetDocumentsInCollection();
-        yield return new WaitForSeconds(1f);
-        LoadJsonDataToObject(_allPopulationAvatarsJSON);
+        MyAvatar a = new MyAvatar();
+        MyAvatar b = new MyAvatar();
+        a.name = "steve";
+        a.colour = Color.yellow;
+        a.spriteId = 0;
+        a.userID = "noUser";
+        b.name = "Mary";
+        b.colour = Color.magenta;
+        b.spriteId = 1;
+        b.userID = "noUser";
+        _avatarPopulation.Items = new[] { a, b };
+        _listOfSprites = _listOfSpritesDebug;
+        InstantiateAvatarPopulation(_avatarPopulation.Items);
     }
 }

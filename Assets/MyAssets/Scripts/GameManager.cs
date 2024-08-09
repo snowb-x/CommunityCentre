@@ -29,11 +29,16 @@ public class GameManager : MonoBehaviour
 
     public Color UserColour { get => _userColour; set => _userColour = value;}
     [SerializeField] private Sprite[] _avatarSpriteList;
+    private string _userAvatarName;
+
+    public string UserAvatarName { get => _userAvatarName; set => _userAvatarName = value; }
+    [SerializeField] private int _lastTallSpriteID;
+
+    public int LastTallSpriteID => _lastTallSpriteID; 
 
     public Sprite[] AvatarSpriteList => _avatarSpriteList;
     [SerializeField] private string _dataBaseCollectionPath;
-    [SerializeField] private Peep _prefabPeep; //the prefab for avatars in the data base
-
+  
     public string DataBaseCollectionPath { get => _dataBaseCollectionPath; set => _dataBaseCollectionPath = value;}
 
     private void Awake()
