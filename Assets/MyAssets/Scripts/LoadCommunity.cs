@@ -45,6 +45,8 @@ public class LoadCommunity : MonoBehaviour
     private string _testJsonData;
     [SerializeField] private TMP_Text _textLog;
     [SerializeField] private TMP_InputField _inputFieldDebug;
+    [SerializeField] private TMP_Text _populationLogDisplayText;
+    [SerializeField] private string _populationLogStringFormat= "{0}/{1}";
     private Population _avatarPopulation;//wrapper 
     [SerializeField] private Peep _peepPrefab;//the prefab for avatars in the data base
     [SerializeField] private Transform[] _spawnPointList;
@@ -108,10 +110,12 @@ public class LoadCommunity : MonoBehaviour
     {
         _textLog.text = avatarPopulationData.Length.ToString();
         _inputFieldDebug.text = avatarPopulationData.Length.ToString();
+        int count=0;
         foreach (var avatar in avatarPopulationData)
         {
             if (GameManager.Instance.UserID != avatar.userID)
             {
+                _populationLogDisplayText.text = string.Format(_populationLogStringFormat,++count,avatarPopulationData.Length); // display the current popultion
                 InstantiateOneAvatar(avatar);   
             }
         }
@@ -124,6 +128,7 @@ public class LoadCommunity : MonoBehaviour
         Vector3 spawnLocation = GetRandomisedSpawnPosition();
         aPeep.SetLocation(spawnLocation);
         aPeep.SetNameOfObject(avatar.name);//must SetSprite() before SetNameOfObject, to set the peep's spriteID, to determine the name height;
+        
     }
 
     // RAMDOM Spawn point function
