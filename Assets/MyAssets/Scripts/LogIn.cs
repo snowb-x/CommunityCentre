@@ -1,17 +1,19 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using FirebaseWebGL.Examples.Utils;
 using FirebaseWebGL.Scripts.FirebaseBridge;
+using FirebaseWebGL.Scripts.Objects;
 using TMPro;
 
 
 public class LogIn : MonoBehaviour
 {
-
+    //===========Debug=============
     [SerializeField] private TMP_Text _text;
     [SerializeField] private TMP_Text _textUserInfo;
+    //==========INPUT FIELDS TEXT ==============
+    [SerializeField] private TMP_InputField _emailInputField;
+    [SerializeField] private TMP_InputField _passwordInputField;
     /// <summary>
     /// Creates a user with email and password
     /// </summary>
@@ -31,6 +33,17 @@ public class LogIn : MonoBehaviour
         FirebaseAuth.OnAuthStateChanged(gameObject.name, "OnRequestSignInSuccess","OnRequestSignInFailed");
     }
     
+    /// <summary>
+    /// Create new User EMAIL and PASSWORD
+    /// </summary>
+    public void CreateUserWithEmailAndPassword() =>
+        FirebaseAuth.CreateUserWithEmailAndPassword(_emailInputField.text, _passwordInputField.text, gameObject.name, "OnRequestCreateNewUserSuccess", "OnRequestCreateNewUserFailed");
+    /// <summary>
+    /// LogIn with EMAIL and PASSWORD
+    /// </summary>
+    public void SignInWithEmailAndPassword() =>
+        FirebaseAuth.SignInWithEmailAndPassword(_emailInputField.text, _passwordInputField.text, gameObject.name, "OnRequestCreateNewUserSuccess", "OnRequestCreateNewUserFailed");
+ 
     private void OnRequestLogInSuccess(string data)
     {
         _text.color = Color.green;
@@ -42,6 +55,22 @@ public class LogIn : MonoBehaviour
         _text.color = Color.red;
         _text.text = error;
     }
+    
+    private void OnRequestCreateNewUserSuccess(string user)
+    {
+        var parsedUser = StringSerializationAPI.Deserialize(typeof(FirebaseUser), user) as FirebaseUser;
+        string data = $"Email: {parsedUser.email}, UserId: {parsedUser.uid}, EmailVerified: {parsedUser.isEmailVerified}";
+        GameManager.Instance.UserID = parsedUser.uid;
+        _text.color = Color.green;
+        _text.text = data;
+    }
+
+    private void OnRequestCreateNewUserFailed(string error)
+    {
+        _text.color = Color.red;
+        _text.text = error;
+        Debug.Log("ERROR: "+error);
+    } 
     
     private void OnRequestSignInSuccess(string data)
     {
@@ -59,4 +88,5 @@ public class LogIn : MonoBehaviour
         _text.color = Color.red;
         _textUserInfo.text = error;
     }
+    
 }
