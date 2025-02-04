@@ -45,9 +45,11 @@ public class LoadCommunity : MonoBehaviour
     private string _testJsonData;
     [SerializeField] private TMP_Text _textLog;
     [SerializeField] private TMP_InputField _inputFieldDebug;
+    [SerializeField] private TMP_Text _populationLogDisplayText;
+    [SerializeField] private string _populationLogStringFormat= "{0}/{1}";
     private Population _avatarPopulation;//wrapper 
     [SerializeField] private Peep _peepPrefab;//the prefab for avatars in the data base
-    [SerializeField] private Transform _spawnPoint;
+    [SerializeField] private Transform[] _spawnPointList;
     [SerializeField] private float _spawnOffset = 2.0f; // offset max, used to randomise the spawn location
     [SerializeField] private Sprite[] _listOfSprites; 
     [SerializeField] private Sprite[] _listOfSpritesDebug; 
@@ -108,10 +110,12 @@ public class LoadCommunity : MonoBehaviour
     {
         _textLog.text = avatarPopulationData.Length.ToString();
         _inputFieldDebug.text = avatarPopulationData.Length.ToString();
+        int count=0;
         foreach (var avatar in avatarPopulationData)
         {
             if (GameManager.Instance.UserID != avatar.userID)
             {
+                _populationLogDisplayText.text = string.Format(_populationLogStringFormat,++count,avatarPopulationData.Length); // display the current popultion
                 InstantiateOneAvatar(avatar);   
             }
         }
@@ -121,9 +125,19 @@ public class LoadCommunity : MonoBehaviour
         Peep aPeep = Instantiate(_peepPrefab);
         aPeep.SetSprite(avatar.spriteId,_listOfSprites[avatar.spriteId],avatar.colour);
         aPeep.SetParent(gameObject);
-        Vector3 spawnLocation = _spawnPoint.transform.position + new Vector3(Random.Range(-1*_spawnOffset,_spawnOffset),0,Random.Range(-1*_spawnOffset,_spawnOffset));
+        Vector3 spawnLocation = GetRandomisedSpawnPosition();
         aPeep.SetLocation(spawnLocation);
         aPeep.SetNameOfObject(avatar.name);//must SetSprite() before SetNameOfObject, to set the peep's spriteID, to determine the name height;
+        
+    }
+
+    // RAMDOM Spawn point function
+    /// <summary>
+    /// Gets and returns a random spawn posistion from the list of spawner positions with a random offset.
+    /// </summary>
+    private Vector3 GetRandomisedSpawnPosition(){
+        int spawnPointID = Random.Range(0,_spawnPointList.Length);
+        return _spawnPointList[spawnPointID].transform.position + new Vector3(Random.Range(-1*_spawnOffset,_spawnOffset),0,Random.Range(-1*_spawnOffset,_spawnOffset));
     }
     
     //----------------------------------------------------------------------------
