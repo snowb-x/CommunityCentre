@@ -1661,7 +1661,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'WAASD or Arrow keys to walk around.
+  m_text: 'WASD or Arrow keys to walk around.
 
     Goal: Find someone you know or
     ask a friend to make their own AVATAR!'
