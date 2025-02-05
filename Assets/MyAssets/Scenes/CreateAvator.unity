@@ -3211,8 +3211,8 @@ MonoBehaviour:
   _textColourPickerGreen: {fileID: 779833896}
   _textColourPickerBlue: {fileID: 2089110259}
   _textUserInfo: {fileID: 969610085}
-  _flagLog: 0
-  _flagUserInfo: 0
+  _flagLog: 1
+  _flagUserInfo: 1
   _flagColourPickerRed: 0
   _flagColourPickerGreen: 0
   _flagColourPickerBlue: 0
@@ -6269,7 +6269,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1906800324}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1372799002}
+        m_TargetAssemblyTypeName: LogIn, Assembly-CSharp
+        m_MethodName: SignInWithEmailAndPassword
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1906800324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6390,7 +6402,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1913525440}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1372799002}
+        m_TargetAssemblyTypeName: LogIn, Assembly-CSharp
+        m_MethodName: CreateUserWithEmailAndPassword
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1913525440
 MonoBehaviour:
   m_ObjectHideFlags: 0

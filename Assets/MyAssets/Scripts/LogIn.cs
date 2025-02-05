@@ -29,9 +29,14 @@ public class LogIn : MonoBehaviour
             Debug.LogError("The code is not running on a WebGL build; as such, the Javascript functions will not be recognized.");
             return;
         }
-        SignInAnonymously(gameObject.name, "OnRequestLogInSuccess","OnRequestLogInFailed");
         FirebaseAuth.OnAuthStateChanged(gameObject.name, "OnRequestSignInSuccess","OnRequestSignInFailed");
     }
+    
+    /// <summary>
+    /// Login ANONYMOUSLY 
+    /// </summary>
+    public void SignInAnonymously() =>
+        SignInAnonymously(gameObject.name, "OnRequestSignInSuccess","OnRequestSignInFailed");
     
     /// <summary>
     /// Create new User EMAIL and PASSWORD
@@ -43,18 +48,18 @@ public class LogIn : MonoBehaviour
     /// </summary>
     public void SignInWithEmailAndPassword() =>
         FirebaseAuth.SignInWithEmailAndPassword(_emailInputField.text, _passwordInputField.text, gameObject.name, "OnRequestCreateNewUserSuccess", "OnRequestCreateNewUserFailed");
- 
-    private void OnRequestLogInSuccess(string data)
-    {
-        _text.color = Color.green;
-        _text.text = data;
-    }
-
-    private void OnRequestLogInFailed(string error)
-    {
-        _text.color = Color.red;
-        _text.text = error;
-    }
+    /// <summary>
+    /// Login with GOOGLE
+    /// </summary>
+    public void SignInWithGoogle() =>
+        FirebaseAuth.SignInWithGoogle(gameObject.name, "DisplayInfo", "DisplayErrorObject");
+        
+   /// <summary>
+   /// Login with FACEBOOK
+   /// </summary>
+    public void SignInWithFacebook() =>
+        FirebaseAuth.SignInWithFacebook(gameObject.name, "DisplayInfo", "DisplayErrorObject");
+   
     
     private void OnRequestCreateNewUserSuccess(string user)
     {
@@ -79,8 +84,6 @@ public class LogIn : MonoBehaviour
 
         User currentUser = JsonUtility.FromJson<User>(data);
         GameManager.Instance.UserID = currentUser.uid;
-        
-        _textUserInfo.text = currentUser.uid;
     }
 
     private void OnRequestSignInFailed(string error)
