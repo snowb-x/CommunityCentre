@@ -5,4 +5,5 @@ using UnityEngine;
 public class User
 {
     public string uid;
+    public string email;
 }

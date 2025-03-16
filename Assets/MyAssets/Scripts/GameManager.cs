@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -18,9 +16,13 @@ public class GameManager : MonoBehaviour
             return _instance;
         }
     }
-
+    public static event Action OnSignin;
+    public static event Action OnSignout;
+    public static event Action OnFailedSignin; 
     //USER LOGIN INFO 
     //Currently anonymous login
+    private User _currentUser = null;
+    public User CurrentUser { get => _currentUser; set => _currentUser = value; }
     private string _userID;
     public string UserID { get => _userID; set => _userID = value; }
     private int _userSpriteID;
@@ -53,5 +55,20 @@ public class GameManager : MonoBehaviour
             _instance = this;
             DontDestroyOnLoad(this.gameObject);
         }
+    }
+
+    public void InvokeSignIn()
+    {
+        OnSignin?.Invoke();
+    }
+
+    public void InvokeSignOut()
+    {
+        OnSignout?.Invoke();
+    }
+
+    public void InvokeFailedSignIn()
+    {
+        OnFailedSignin?.Invoke();
     }
 }
