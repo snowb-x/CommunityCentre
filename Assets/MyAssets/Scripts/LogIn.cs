@@ -14,7 +14,7 @@ public class LogIn : MonoBehaviour
     //==========INPUT FIELDS TEXT ==============
     [SerializeField] private TMP_InputField _emailInputField;
     [SerializeField] private TMP_InputField _passwordInputField;
- 
+
     /// <summary>
     /// Creates a user in guess mode
     /// </summary>
@@ -23,7 +23,7 @@ public class LogIn : MonoBehaviour
     /// <param name="fallback"> Name of the method to call when the operation was unsuccessful. Method must have signature: void Method(string output). Will return a serialized FirebaseError object </param>
     [DllImport("__Internal")]
     public static extern void SignInAnonymously(string objectName, string callback, string fallback);
-    
+
     /// <summary>
     /// Sign out the user
     /// </summary>
@@ -32,7 +32,7 @@ public class LogIn : MonoBehaviour
     /// <param name="fallback"> Name of the method to call when the operation was unsuccessful. Method must have signature: void Method(string output). Will return a serialized FirebaseError object </param>
     [DllImport("__Internal")]
     public static extern void SignOutUser(string objectName, string callback, string fallback);
-  
+
     private void Start()
     {
         if (Application.platform != RuntimePlatform.WebGLPlayer)
@@ -40,15 +40,15 @@ public class LogIn : MonoBehaviour
             Debug.LogError("The code is not running on a WebGL build; as such, the Javascript functions will not be recognized.");
             return;
         }
-        FirebaseAuth.OnAuthStateChanged(gameObject.name, "DisplayUserInfo","DisplayInfo");
+        FirebaseAuth.OnAuthStateChanged(gameObject.name, "DisplayUserInfo", "DisplayInfo");
     }
-    
+
     /// <summary>
     /// Login ANONYMOUSLY 
     /// </summary>
     public void SignInAnonymously() =>
-        SignInAnonymously(gameObject.name, "OnRequestGuestModeSuccess","OnRequestGuestModeFailed");
-    
+        SignInAnonymously(gameObject.name, "OnRequestGuestModeSuccess", "OnRequestGuestModeFailed");
+    //TODO: need text with pw requirements found in firebase auth. 6 char, Cap and lower char, num, special char
     /// <summary>
     /// Create new User EMAIL and PASSWORD
     /// </summary>
@@ -64,19 +64,19 @@ public class LogIn : MonoBehaviour
     /// </summary>
     public void SignInWithGoogle() =>
         FirebaseAuth.SignInWithGoogle(gameObject.name, "OnRequestSignInSuccess", "OnRequestSignInFailed");
-        
-   /// <summary>
-   /// Login with FACEBOOK
-   /// </summary>
+
+    /// <summary>
+    /// Login with FACEBOOK
+    /// </summary>
     public void SignInWithFacebook() =>
         FirebaseAuth.SignInWithFacebook(gameObject.name, "OnRequestSignInSuccess", "OnRequestSignInFailed");
 
-   /// <summary>
-   /// Sign Out User 
-   /// </summary>
+    /// <summary>
+    /// Sign Out User 
+    /// </summary>
     public void SignOutUser() =>
         SignOutUser(gameObject.name, "OnSignOutUserSuccess", "OnSignOutUserFailed");
-    
+
     private void OnRequestCreateNewUserSuccess(string user)
     {
         var parsedUser = StringSerializationAPI.Deserialize(typeof(FirebaseUser), user) as FirebaseUser;
@@ -94,17 +94,17 @@ public class LogIn : MonoBehaviour
     {
         _text.color = Color.red;
         _text.text = error;
-        Debug.Log("ERROR: "+error);
+        Debug.Log("ERROR: " + error);
         GameManager.Instance.InvokeFailedSignIn();
-    } 
-    
+    }
+
     private void OnRequestSignInSuccess(string data)
     {
         _text.color = Color.green;
         _textUserInfo.text = data;
 
         User currentUser = JsonUtility.FromJson<User>(data);
-        Debug.Log("User is "+ data);
+        Debug.Log("User is " + data);
         GameManager.Instance.UserID = currentUser.uid;
         GameManager.Instance.CurrentUser = currentUser;
         GameManager.Instance.InvokeSignIn();
@@ -114,7 +114,7 @@ public class LogIn : MonoBehaviour
     {
         _text.color = Color.red;
         _textUserInfo.text = error;
-        DisplayInfo("SignIn Failed error -- "+error);
+        DisplayInfo("SignIn Failed error -- " + error);
         GameManager.Instance.InvokeFailedSignIn();
     }
 
@@ -124,7 +124,7 @@ public class LogIn : MonoBehaviour
         GameManager.Instance.CurrentUser = new User();
         GameManager.Instance.InvokeSignIn();
     }
-    
+
     private void OnRequestGuestModeFailed()
     {
         Debug.Log("Signed In as Anonymously Failed");
@@ -142,7 +142,7 @@ public class LogIn : MonoBehaviour
     {
         Debug.Log(data);
     }
-    //TODO: Bug create new user bug. 
+
     public void DisplayUserInfo(string user)
     {
         var parsedUser = StringSerializationAPI.Deserialize(typeof(FirebaseUser), user) as FirebaseUser;
@@ -164,16 +164,16 @@ public class LogIn : MonoBehaviour
     {
         _text.color = _text.color == Color.green ? Color.blue : Color.green;
         _text.text = data;
-        Debug.Log("Display user data ---- "+data);
+        Debug.Log("Display user data ---- " + data);
     }
-    
+
     public void DisplayInfo(string info)
     {
         _text.color = Color.white;
         _text.text = info;
-        Debug.Log("Display information here "+info);
+        Debug.Log("Display information here " + info);
     }
-    
+
     //todo: sign out methods and call back
-    
+
 }
